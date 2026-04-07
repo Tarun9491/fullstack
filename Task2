@@ -1,0 +1,162 @@
+<?php
+include 'db.php';
+
+/* Get filter and sort values */
+$department = isset($_GET['department']) ? $_GET['department'] : '';
+$sort = isset($_GET['sort']) ? $_GET['sort'] : '';
+
+/* Base query */
+$sql = "SELECT * FROM students";
+
+/* Apply department filter */
+if ($department != '') {
+    $sql .= " WHERE department='$department'";
+}
+
+/* Apply sorting */
+if ($sort == 'name') {
+    $sql .= " ORDER BY name ASC";
+} elseif ($sort == 'dob') {
+    $sql .= " ORDER BY dob ASC";
+}
+
+$result = $conn->query($sql);
+
+/* Count students per department */
+$count_sql = "SELECT department, COUNT(*) as total FROM students GROUP BY department";
+$count_result = $conn->query($count_sql);
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Dashboard</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f2f2f2;
+        }
+
+        .container {
+            width: 90%;
+            margin: 30px auto;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        .controls {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        select, button {
+            padding: 8px;
+            margin: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background: #4facfe;
+            color: white;
+        }
+
+        .count-box {
+            margin-top: 30px;
+            background: white;
+            padding: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Student Dashboard</h2>
+
+    <!-- Filter & Sort Controls -->
+    <div class="controls">
+        <form method="GET">
+            Filter by Department:
+            <select name="department">
+                <option value="">All</option>
+                <option>CSE</option>
+                <option>ECE</option>
+                <option>EEE</option>
+                <option>Mechanical</option>
+            </select>
+
+            Sort by:
+            <select name="sort">
+                <option value="">None</option>
+                <option value="name">Name</option>
+                <option value="dob">DOB</option>
+            </select>
+
+            <button type="submit">Apply</button>
+        </form>
+    </div>
+
+    <!-- Student Table -->
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>DOB</th>
+            <th>Department</th>
+            <th>Phone</th>
+        </tr>
+
+        <?php
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                echo "<tr>
+                        <td>{$row['id']}</td>
+                        <td>{$row['name']}</td>
+                        <td>{$row['email']}</td>
+                        <td>{$row['dob']}</td>
+                        <td>{$row['department']}</td>
+                        <td>{$row['phone']}</td>
+                      </tr>";
+            }
+        } else {
+            echo "<tr><td colspan='6'>No records found</td></tr>";
+        }
+        ?>
+    </table>
+
+    <!-- Department Count -->
+    <div class="count-box">
+        <h3>Student Count by Department</h3>
+        <table>
+            <tr>
+                <th>Department</th>
+                <th>Total Students</th>
+            </tr>
+
+            <?php
+            while ($row = $count_result->fetch_assoc()) {
+                echo "<tr>
+                        <td>{$row['department']}</td>
+                        <td>{$row['total']}</td>
+                      </tr>";
+            }
+            ?>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>
