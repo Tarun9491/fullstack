@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Feedback Form</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+</head>
+<body>
+
+<div class="form-box">
+    <h2>Feedback Form</h2>
+
+    <label>Name:</label>
+    <input type="text" id="name"
+        onkeypress="validateName()"
+        onmouseover="highlight(this)"
+        onmouseout="unhighlight(this)">
+    <div id="nameError" class="error"></div>
+
+    <label>Email:</label>
+    <input type="text" id="email"
+        onkeypress="validateEmail()"
+        onmouseover="highlight(this)"
+        onmouseout="unhighlight(this)">
+    <div id="emailError" class="error"></div>
+
+    <label>Feedback:</label>
+    <textarea id="feedback"
+        onkeypress="validateFeedback()"
+        onmouseover="highlight(this)"
+        onmouseout="unhighlight(this)"></textarea>
+    <div id="feedbackError" class="error"></div>
+
+    <button ondblclick="submitForm()">Submit</button>
+</div>
+
+</body>
+</html>
